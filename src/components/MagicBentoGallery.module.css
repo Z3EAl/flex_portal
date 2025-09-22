@@ -1,0 +1,209 @@
+:root {
+  --magic-glow-rgb: 193, 154, 91;
+  --magic-border: rgba(206, 188, 162, 0.55);
+  --magic-surface: rgba(255, 255, 255, 0.94);
+  --magic-shadow: 0 20px 46px rgba(33, 25, 16, 0.14);
+  --magic-highlight-shadow: 0 30px 60px rgba(33, 25, 16, 0.2);
+  --magic-background: #f6f1e6;
+}
+
+.bentoSection {
+  position: relative;
+  padding-inline: clamp(1rem, 6vw, 4rem);
+  background: var(--magic-background);
+}
+
+.cardGrid {
+  position: relative;
+  margin: 0 auto;
+  display: grid;
+  gap: clamp(0.65rem, 1.5vw, 1.25rem);
+  grid-template-columns: minmax(0, 1fr);
+  max-width: min(1120px, 100%);
+}
+
+.card {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 24px;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--magic-surface);
+  border: 1px solid var(--magic-border);
+  box-shadow: var(--magic-shadow);
+  transform: perspective(1200px)
+    rotateX(var(--magic-tilt-x, 0deg))
+    rotateY(var(--magic-tilt-y, 0deg))
+    translate3d(var(--magic-shift-x, 0px), var(--magic-shift-y, 0px), 0px);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(var(--magic-glow-rgb), 0.18);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.5;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    160px circle at var(--magic-x, 50%) var(--magic-y, 50%),
+    rgba(var(--magic-glow-rgb), calc(var(--magic-hover, 0) * 0.35)) 0%,
+    rgba(var(--magic-glow-rgb), calc(var(--magic-hover, 0) * 0.18)) 35%,
+    transparent 70%
+  );
+  opacity: var(--magic-hover, 0);
+  transition: opacity 220ms ease;
+  z-index: 1;
+}
+
+.cardSurface {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  background: var(--magic-surface);
+}
+
+.cardSurface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(17, 23, 24, 0.08) 0%, transparent 40%);
+  opacity: 0;
+  transition: opacity 220ms ease;
+  z-index: 1;
+}
+
+.cardImage {
+  object-fit: cover;
+  transition: transform 320ms ease;
+  filter: saturate(1.05);
+}
+
+.card[data-magic-card]:hover {
+  box-shadow: var(--magic-highlight-shadow);
+}
+
+.card[data-magic-card]:hover .cardSurface::after {
+  opacity: 1;
+}
+
+.card[data-magic-card]:hover .cardImage {
+  transform: scale(1.05);
+}
+
+.cardCta {
+  position: absolute;
+  right: clamp(0.8rem, 1.6vw, 1.4rem);
+  bottom: clamp(0.8rem, 1.6vw, 1.4rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.65rem 1.1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #1f2421;
+  font-weight: 600;
+  font-size: 0.92rem;
+  box-shadow: 0 18px 32px rgba(31, 38, 45, 0.18);
+  text-decoration: none;
+  z-index: 2;
+}
+
+.cardCta:hover {
+  background: #ffffff;
+}
+
+.cardCtaIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background: rgba(var(--magic-glow-rgb), 0.16);
+  color: rgba(var(--magic-glow-rgb), 1);
+}
+
+.cardCtaIcon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(var(--magic-glow-rgb), 0.45) 0%,
+    rgba(var(--magic-glow-rgb), 0.18) 45%,
+    transparent 70%
+  );
+  pointer-events: none;
+  transform: scale(0);
+  animation: ripple 0.6s ease-out forwards;
+  z-index: 3;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@media (min-width: 600px) {
+  .cardGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .cardGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .cardGrid > .card:nth-child(1) {
+    grid-column: 1 / span 2;
+    grid-row: 1 / span 2;
+    aspect-ratio: 3 / 2;
+    min-height: 100%;
+  }
+
+  .cardGrid > .card:nth-child(n + 2) {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+
+  .cardImage {
+    transition: none;
+  }
+
+  .card::before {
+    display: none;
+  }
+
+  .card::after {
+    opacity: 0.4;
+  }
+
+  .cardSurface::after {
+    display: none;
+  }
+}
