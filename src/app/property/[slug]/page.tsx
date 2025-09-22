@@ -120,7 +120,6 @@ export default async function PropertyPage({ params }: Props) {
       gallery[expandedGallery.length % gallery.length] ?? heroImage,
     );
   }
-
   const bentoCards = expandedGallery.slice(0, minGalleryCards).map((image, index) => ({
     id: `${property.slug}-${index}`,
     image,
