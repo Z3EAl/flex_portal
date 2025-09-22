@@ -3,7 +3,7 @@ import MagicBentoGallery from "@/components/MagicBentoGallery";
 import { getPropertyBySlug } from "@/lib/properties";
 
 type Props = {
-  params: Promise<{ slug: string | string[] }>;
+  params: { slug: string | string[] };
 };
 
 const fallbackGallery = [
@@ -411,8 +411,8 @@ function AmenityIcon({ name, className }: { name: string; className?: string }) 
   return <Icon className={className} />;
 }
   
-export default async function PropertyPage({ params }: Props) {
-  const { slug: raw } = await params;
+export default function PropertyPage({ params }: Props) {
+  const { slug: raw } = params;
   const slug = decodeURIComponent(Array.isArray(raw) ? raw.join("/") : raw);
 
   const property = getPropertyBySlug(slug);
@@ -512,140 +512,133 @@ export default async function PropertyPage({ params }: Props) {
         </article>
 
         <div className="mt-10 gap-10 pb-16 lg:grid lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-          <div>
-            <div
-              className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-6 pr-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-              aria-label="Property highlight panels"
-            >
-              <article className="w-[min(28rem,85vw)] shrink-0 snap-start rounded-3xl border border-[#e4e8dc] bg-[#fdfcf9] p-8 shadow-[0_20px_44px_rgba(23,32,27,0.06)] backdrop-blur lg:w-[26rem] xl:w-[28rem]">
-                <div className="mb-6 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e3f0e7] text-[#1f3e34]">
-                      <SparkleIcon className="h-5 w-5" />
-                    </span>
-                    <h2 className="text-2xl font-semibold text-[#13392f]">Amenities</h2>
-                  </div>
-                  <button
-                    type="button"
-                    className="rounded-full border border-transparent bg-[#edf5ef] px-4 py-2 text-sm font-medium text-[#134e48] transition hover:border-[#c8dace] hover:bg-white"
-                  >
-                    View all amenities
-                  </button>
-                </div>
-                <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
-                  {amenities.map(item => (
-                    <div key={item} className="flex items-center gap-4">
-                      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#eef5ef] text-[#1f3e34]">
-                        <AmenityIcon name={item} className="h-5 w-5" />
-                      </span>
-                      <span className="text-sm font-medium text-[#2f3e35]">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </article>
-
-              <article className="w-[min(28rem,85vw)] shrink-0 snap-start rounded-3xl border border-[#dbe6dc] bg-[#f4f7f2] p-8 shadow-[0_26px_56px_rgba(18,31,25,0.07)] lg:w-[26rem] xl:w-[28rem]">
-                <div className="mb-6 flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e0efe5] text-[#1f3e34]">
-                      <ShieldIcon className="h-5 w-5" />
-                    </span>
-                    <div>
-                      <h2 className="text-2xl font-semibold text-[#13392f]">Stay Policies</h2>
-                      <p className="text-sm text-[#5f6f65]">Check what applies before booking</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-5">
-                  <section className="rounded-2xl border border-[#dce7dc] bg-white p-6 shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#e6f1e8] text-[#1f3e34]">
-                        <ScheduleIcon className="h-4 w-4" />
-                      </span>
-                      <h3 className="text-lg font-semibold text-[#13392f]">
-                        Check-in &amp; Check-out
-                      </h3>
-                    </div>
-                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                      <div className="rounded-2xl border border-[#e7efe3] bg-[#f8fbf7] p-4">
-                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6d7b72]">
-                          Check-in Time
-                        </p>
-                        <p className="mt-2 text-xl font-semibold text-[#13392f]">
-                          {schedule.checkIn}
-                        </p>
-                      </div>
-                      <div className="rounded-2xl border border-[#e7efe3] bg-[#f8fbf7] p-4">
-                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6d7b72]">
-                          Check-out Time
-                        </p>
-                        <p className="mt-2 text-xl font-semibold text-[#13392f]">
-                          {schedule.checkOut}
-                        </p>
-                      </div>
-                    </div>
-                  </section>
-
-                  <section className="rounded-2xl border border-[#dce7dc] bg-white p-6 shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#e6f1e8] text-[#1f3e34]">
-                        <RulesIcon className="h-4 w-4" />
-                      </span>
-                      <h3 className="text-lg font-semibold text-[#13392f]">House Rules</h3>
-                    </div>
-                    <ul className="mt-4 grid gap-x-4 gap-y-3 sm:grid-cols-2">
-                      {houseRules.map(rule => (
-                        <li
-                          key={rule}
-                          className="flex items-start gap-3 rounded-xl bg-[#f7faf6] px-3 py-2 text-sm text-[#3a4941]"
-                        >
-                          <span className="mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#134e48] text-white">
-                            <CheckIcon className="h-3.5 w-3.5" />
-                          </span>
-                          {rule}
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-
-                  <section className="rounded-2xl border border-[#dce7dc] bg-white p-6 shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#e6f1e8] text-[#1f3e34]">
-                        <DocumentIcon className="h-4 w-4" />
-                      </span>
-                      <h3 className="text-lg font-semibold text-[#13392f]">Cancellation Policy</h3>
-                    </div>
-                    <div className="mt-4 grid gap-3">
-                      {cancellationPolicies.map(policy => (
-                        <div key={policy.title} className="rounded-2xl border border-[#e7efe3] bg-[#f8fbf7] p-5">
-                          <p className="text-sm font-semibold text-[#134e48]">
-                            {policy.title}
-                          </p>
-                          <ul className="mt-3 space-y-2 text-sm text-[#3a4941]">
-                            {policy.details.map(detail => (
-                              <li key={detail} className="flex gap-2">
-                                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#134e48]" />
-                                <span>{detail}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
-                    </div>
-                  </section>
-                </div>
-              </article>
-
-              <article className="w-[min(28rem,85vw)] shrink-0 snap-start rounded-3xl border border-[#e2e6db] bg-white/90 p-8 shadow-[0_24px_50px_rgba(18,31,25,0.06)] backdrop-blur lg:w-[26rem] xl:w-[28rem]">
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-2xl font-semibold text-[#13392f]">Guest Reviews</h2>
-                  <span className="text-xs uppercase tracking-[0.2em] text-[#7a847c]">
-                    Approved only
+          <div className="space-y-8">
+            <article className="rounded-3xl border border-[#e4e8dc] bg-[#fdfcf9] p-8 shadow-[0_20px_44px_rgba(23,32,27,0.06)] backdrop-blur">
+              <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e3f0e7] text-[#1f3e34]">
+                    <SparkleIcon className="h-5 w-5" />
                   </span>
+                  <h2 className="text-2xl font-semibold text-[#13392f]">Amenities</h2>
                 </div>
-                <ApprovedReviews listing={property.slug} />
-              </article>
-            </div>
+                <button
+                  type="button"
+                  className="rounded-full border border-transparent bg-[#edf5ef] px-4 py-2 text-sm font-medium text-[#134e48] transition hover:border-[#c8dace] hover:bg-white"
+                >
+                  View all amenities
+                </button>
+              </div>
+              <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+                {amenities.map(item => (
+                  <div key={item} className="flex items-center gap-4">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#eef5ef] text-[#1f3e34]">
+                      <AmenityIcon name={item} className="h-5 w-5" />
+                    </span>
+                    <span className="text-sm font-medium text-[#2f3e35]">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </article>
+
+            <article className="rounded-3xl border border-[#dbe6dc] bg-[#f4f7f2] p-8 shadow-[0_26px_56px_rgba(18,31,25,0.07)]">
+              <div className="mb-6 flex items-start gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e0efe5] text-[#1f3e34]">
+                  <ShieldIcon className="h-5 w-5" />
+                </span>
+                <div>
+                  <h2 className="text-2xl font-semibold text-[#13392f]">Stay Policies</h2>
+                  <p className="text-sm text-[#5f6f65]">Check what applies before booking</p>
+                </div>
+              </div>
+              <div className="space-y-5">
+                <section className="rounded-2xl border border-[#dce7dc] bg-white p-6 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#e6f1e8] text-[#1f3e34]">
+                      <ScheduleIcon className="h-4 w-4" />
+                    </span>
+                    <h3 className="text-lg font-semibold text-[#13392f]">
+                      Check-in &amp; Check-out
+                    </h3>
+                  </div>
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div className="rounded-2xl border border-[#e7efe3] bg-[#f8fbf7] p-4">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6d7b72]">
+                        Check-in Time
+                      </p>
+                      <p className="mt-2 text-xl font-semibold text-[#13392f]">
+                        {schedule.checkIn}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl border border-[#e7efe3] bg-[#f8fbf7] p-4">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#6d7b72]">
+                        Check-out Time
+                      </p>
+                      <p className="mt-2 text-xl font-semibold text-[#13392f]">
+                        {schedule.checkOut}
+                      </p>
+                    </div>
+                  </div>
+                </section>
+
+                <section className="rounded-2xl border border-[#dce7dc] bg-white p-6 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#e6f1e8] text-[#1f3e34]">
+                      <RulesIcon className="h-4 w-4" />
+                    </span>
+                    <h3 className="text-lg font-semibold text-[#13392f]">House Rules</h3>
+                  </div>
+                  <ul className="mt-4 grid gap-x-4 gap-y-3 sm:grid-cols-2">
+                    {houseRules.map(rule => (
+                      <li
+                        key={rule}
+                        className="flex items-start gap-3 rounded-xl bg-[#f7faf6] px-3 py-2 text-sm text-[#3a4941]"
+                      >
+                        <span className="mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#134e48] text-white">
+                          <CheckIcon className="h-3.5 w-3.5" />
+                        </span>
+                        {rule}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+
+                <section className="rounded-2xl border border-[#dce7dc] bg-white p-6 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#e6f1e8] text-[#1f3e34]">
+                      <DocumentIcon className="h-4 w-4" />
+                    </span>
+                    <h3 className="text-lg font-semibold text-[#13392f]">Cancellation Policy</h3>
+                  </div>
+                  <div className="mt-4 grid gap-3">
+                    {cancellationPolicies.map(policy => (
+                      <div key={policy.title} className="rounded-2xl border border-[#e7efe3] bg-[#f8fbf7] p-5">
+                        <p className="text-sm font-semibold text-[#134e48]">
+                          {policy.title}
+                        </p>
+                        <ul className="mt-3 space-y-2 text-sm text-[#3a4941]">
+                          {policy.details.map(detail => (
+                            <li key={detail} className="flex gap-2">
+                              <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[#134e48]" />
+                              <span>{detail}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            </article>
+
+            <article className="rounded-3xl border border-[#e2e6db] bg-white/90 p-8 shadow-[0_24px_50px_rgba(18,31,25,0.06)] backdrop-blur">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-2xl font-semibold text-[#13392f]">Guest Reviews</h2>
+                <span className="text-xs uppercase tracking-[0.2em] text-[#7a847c]">
+                  Approved only
+                </span>
+              </div>
+              <ApprovedReviews listing={property.slug} />
+            </article>
           </div>
 
           <aside className="mt-10 space-y-5 pb-16 lg:mt-0 lg:sticky lg:top-24">
@@ -654,34 +647,73 @@ export default async function PropertyPage({ params }: Props) {
                 <h3 className="text-xl font-semibold text-[#13392f]">Book Your Stay</h3>
                 <p className="text-sm text-[#6d7b72]">Select dates to see prices</p>
               </div>
-              <div className="mt-6 space-y-4">
+              <form className="mt-6 space-y-5" aria-label="Book your stay">
                 <div className="grid gap-3 sm:grid-cols-2">
-                  {(["Check-in", "Check-out"] as const).map(label => (
-                    <button
-                      key={label}
-                      type="button"
-                      className="text-left"
-                    >
-                      <div className="w-full rounded-2xl border border-[#dfe5da] bg-[#f8faf6] px-4 py-3">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-[#6d7b72]">
-                          {label}
-                        </p>
-                        <p className="mt-1 text-sm font-medium text-[#13392f]">
-                          Select date
-                        </p>
-                      </div>
-                    </button>
-                  ))}
+                  <label htmlFor="check-in" className="block rounded-2xl border border-[#dfe5da] bg-[#f8faf6] px-4 py-3">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-[#6d7b72]">
+                      Check-in
+                    </span>
+                    <input
+                      id="check-in"
+                      name="check-in"
+                      type="date"
+                      className="mt-1 w-full border-none bg-transparent text-sm font-medium text-[#13392f] outline-none ring-0 focus:outline-none focus:ring-0"
+                    />
+                  </label>
+                  <label htmlFor="check-out" className="block rounded-2xl border border-[#dfe5da] bg-[#f8faf6] px-4 py-3">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-[#6d7b72]">
+                      Check-out
+                    </span>
+                    <input
+                      id="check-out"
+                      name="check-out"
+                      type="date"
+                      className="mt-1 w-full border-none bg-transparent text-sm font-medium text-[#13392f] outline-none ring-0 focus:outline-none focus:ring-0"
+                    />
+                  </label>
                 </div>
-                <button type="button" className="w-full rounded-2xl border border-[#dfe5da] bg-[#f8faf6] px-4 py-3 text-left">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-[#6d7b72]">
+                <label htmlFor="guests" className="block rounded-2xl border border-[#dfe5da] bg-[#f8faf6] px-4 py-3">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-[#6d7b72]">
                     Guests
-                  </p>
-                  <p className="mt-1 text-sm font-medium text-[#13392f]">1 guest</p>
-                </button>
+                  </span>
+                  <input
+                    id="guests"
+                    name="guests"
+                    type="number"
+                    min={1}
+                    defaultValue={1}
+                    className="mt-1 w-full border-none bg-transparent text-sm font-medium text-[#13392f] outline-none ring-0 focus:outline-none focus:ring-0"
+                  />
+                </label>
+                <fieldset className="rounded-2xl border border-[#dfe5da] bg-[#f8faf6] px-4 py-3">
+                  <legend className="text-xs font-semibold uppercase tracking-wide text-[#6d7b72]">
+                    Trip type
+                  </legend>
+                  <div className="mt-3 flex flex-col gap-2 text-sm font-medium text-[#13392f]">
+                    <label className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="trip-type"
+                        value="leisure"
+                        defaultChecked
+                        className="h-4 w-4 border-[#b7c5b4] text-[#134e48] focus:ring-[#134e48]"
+                      />
+                      Leisure
+                    </label>
+                    <label className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="trip-type"
+                        value="business"
+                        className="h-4 w-4 border-[#b7c5b4] text-[#134e48] focus:ring-[#134e48]"
+                      />
+                      Business
+                    </label>
+                  </div>
+                </fieldset>
                 <div className="space-y-3">
                   <button
-                    type="button"
+                    type="submit"
                     className="w-full rounded-2xl bg-[#134e48] px-4 py-3 text-center text-base font-semibold text-white shadow-lg shadow-[#134e4830] transition hover:bg-[#0f403b]"
                   >
                     Check availability
@@ -693,13 +725,20 @@ export default async function PropertyPage({ params }: Props) {
                     Send inquiry
                   </button>
                 </div>
-                <div className="flex items-center gap-3 rounded-2xl bg-[#f1f6f2] px-4 py-3 text-sm text-[#536156]">
-                  <span className="relative inline-flex h-5 w-9 items-center rounded-full bg-[#134e48]">
-                    <span className="absolute left-[22px] h-4 w-4 rounded-full bg-white shadow-sm" />
+                <label className="flex items-center gap-3 rounded-2xl bg-[#f1f6f2] px-4 py-3 text-sm text-[#536156]">
+                  <span className="relative inline-flex h-5 w-9 items-center">
+                    <input
+                      type="checkbox"
+                      name="instant-confirmation"
+                      defaultChecked
+                      className="peer absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                    />
+                    <span className="inline-flex h-full w-full items-center rounded-full bg-[#d9e4da] transition peer-checked:bg-[#134e48]" />
+                    <span className="absolute left-1 h-3.5 w-3.5 rounded-full bg-white shadow-sm transition peer-checked:translate-x-4" />
                   </span>
                   Instant booking confirmation
-                </div>
-              </div>
+                </label>
+              </form>
             </div>
 
             <div className="rounded-3xl border border-[#e2e6db] bg-[#f8faf6] p-6 text-center shadow-sm">
