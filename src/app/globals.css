@@ -1,23 +1,26 @@
 @import "tailwindcss";
 
+/* Design tokens */
 :root {
-  --background: #ffffff;
+  --background: #f9fafb; /* light gray background */
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* If you use Next’s Geist fonts, these exist; otherwise omit: */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Optional Tailwind v4 theme mapping to CSS vars */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
+
+/* Force light appearance */
+:root { color-scheme: light; }
+
+html, body { height: 100%; }
 
 body {
   background: var(--background);

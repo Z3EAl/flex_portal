@@ -1,61 +1,79 @@
-"use client";
+import Image from "next/image";
+import ApprovedReviews from "@/components/ApprovedReviews";
+import { getPropertyBySlug } from "@/lib/properties";
 
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
-
-type Review = {
-  id: number;
-  listing: string;
-  guest: string;
-  date: string;
-  rating: number | null;
-  text: string;
+type Props = {
+  params: Promise<{ slug: string | string[] }>;
 };
 
-export default function Property() {
-  const params = useParams<{ slug: string }>();
-  const rawSlug = Array.isArray(params.slug) ? params.slug.join("/") : params.slug;
-  const slug = decodeURIComponent(rawSlug || "");
+export default async function PropertyPage({ params }: Props) {
+  // In Next 15, params is a Promise in server components.
+  const { slug: raw } = await params;
+  const slug = decodeURIComponent(Array.isArray(raw) ? raw.join("/") : raw);
 
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [approved, setApproved] = useState<Record<number, boolean>>({});
+  const property = getPropertyBySlug(slug);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("approved");
-    if (saved) setApproved(JSON.parse(saved));
-    fetch("/api/reviews/hostaway")
-      .then(r => r.json())
-      .then(d => setReviews(d.reviews ?? []));
-  }, []);
-
-  const visible = useMemo(
-    () => reviews.filter(r => r.listing === slug && approved[r.id]),
-    [reviews, approved, slug]
-  );
+  if (!property) {
+    return (
+      <main className="p-6">
+        <h1 className="text-2xl font-semibold">Property not found</h1>
+      </main>
+    );
+  }
 
   return (
-    <main className="p-6 space-y-6">
-      <header>
-        <h1 className="text-2xl font-semibold">{slug}</h1>
-        <p className="text-sm text-gray-600">Guest Reviews</p>
-      </header>
-
-      {visible.length === 0 ? (
-        <div className="text-gray-500">No approved reviews yet.</div>
-      ) : (
-        <div className="grid gap-3">
-          {visible.map(r => (
-            <div key={r.id} className="rounded-2xl border p-4">
-              <div className="flex items-center justify-between">
-                <div className="font-medium">{r.guest}</div>
-                <div className="text-sm">{r.date}</div>
-              </div>
-              <div className="text-sm">Rating: {r.rating ?? "—"}</div>
-              <p className="mt-2">{r.text}</p>
-            </div>
-          ))}
+    <main className="min-h-screen bg-gray-50">
+      {/* Hero */}
+      <section className="relative h-64 w-full bg-white">
+        <div className="absolute inset-0 overflow-hidden">
+          <Image
+            src={property.hero}
+            alt={property.name}
+            fill
+            className="object-contain md:object-cover"
+            priority
+          />
         </div>
-      )}
+      </section>
+
+      {/* Content container */}
+      <section className="mx-auto max-w-5xl px-4 py-6 space-y-8">
+        {/* Header */}
+        <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-2">
+          <div>
+            <h1 className="text-3xl font-bold">{property.name}</h1>
+            <p className="text-gray-600">{property.location}</p>
+          </div>
+          <div className="text-sm text-gray-500">{property.shortSummary}</div>
+        </header>
+
+        {/* Meta / Amenities */}
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="md:col-span-2 rounded-2xl border bg-white p-5">
+            <h2 className="text-lg font-semibold mb-2">About this place</h2>
+            <p className="text-gray-800 leading-relaxed">{property.description}</p>
+          </div>
+          <aside className="rounded-2xl border bg-white p-5">
+            <h3 className="text-base font-semibold mb-2">Amenities</h3>
+            <ul className="list-disc list-inside text-gray-800 space-y-1">
+              {property.amenities.map((a) => (
+                <li key={a}>{a}</li>
+              ))}
+            </ul>
+          </aside>
+        </div>
+
+        {/* Reviews section */}
+        <section className="rounded-2xl border bg-white p-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Guest Reviews</h2>
+            <span className="text-xs text-gray-500">Only approved reviews are shown</span>
+          </div>
+          <div className="mt-4">
+            <ApprovedReviews listing={property.slug} />
+          </div>
+        </section>
+      </section>
     </main>
   );
 }
