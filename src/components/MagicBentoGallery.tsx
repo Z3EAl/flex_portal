@@ -124,18 +124,10 @@ function MagicBentoCardView({
   card,
   index,
   reducedMotion,
-  isLast,
-  showViewAll,
-  viewAllHref,
-  viewAllLabel,
 }: {
   card: MagicBentoCard;
   index: number;
   reducedMotion: boolean;
-  isLast: boolean;
-  showViewAll: boolean;
-  viewAllHref?: string;
-  viewAllLabel: string;
 }) {
   const cardRef = useRef<HTMLDivElement | null>(null);
 
@@ -166,27 +158,6 @@ function MagicBentoCardView({
           priority={index === 0}
           unoptimized={card.image.src.startsWith("http")}
         />
-        {isLast && showViewAll ? (
-          viewAllHref ? (
-            <a
-              href={viewAllHref}
-              className={styles.cardCta}
-              aria-label={viewAllLabel}
-            >
-              <span className={styles.cardCtaIcon}>
-                <ArrowIcon />
-              </span>
-              <span>{viewAllLabel}</span>
-            </a>
-          ) : (
-            <span className={styles.cardCta} aria-hidden>
-              <span className={styles.cardCtaIcon}>
-                <ArrowIcon />
-              </span>
-              <span>{viewAllLabel}</span>
-            </span>
-          )
-        ) : null}
       </div>
     </div>
   );
@@ -249,13 +220,32 @@ export default function MagicBentoGallery({
             card={card}
             index={index}
             reducedMotion={reducedMotion}
-            isLast={index === normalizedCards.length - 1}
-            showViewAll={showViewAll}
-            viewAllHref={viewAllHref}
-            viewAllLabel={viewAllLabel}
           />
         ))}
       </div>
+      {showViewAll ? (
+        <div className={styles.viewAllRow}>
+          {viewAllHref ? (
+            <a
+              href={viewAllHref}
+              className={styles.viewAllLink}
+              aria-label={viewAllLabel}
+            >
+              <span className={styles.viewAllIcon}>
+                <ArrowIcon />
+              </span>
+              <span>{viewAllLabel}</span>
+            </a>
+          ) : (
+            <span className={styles.viewAllLink}>
+              <span className={styles.viewAllIcon}>
+                <ArrowIcon />
+              </span>
+              <span>{viewAllLabel}</span>
+            </span>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }
