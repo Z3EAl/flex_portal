@@ -102,7 +102,6 @@
 .card[data-magic-card]:hover .cardImage {
   transform: scale(1.05);
 }
-
 .ripple {
   position: absolute;
   border-radius: 50%;

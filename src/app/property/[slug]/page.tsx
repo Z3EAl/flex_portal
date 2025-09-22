@@ -410,7 +410,7 @@ function AmenityIcon({ name, className }: { name: string; className?: string }) 
   const Icon = getAmenityIcon(name);
   return <Icon className={className} />;
 }
-
+  
 export default async function PropertyPage({ params }: Props) {
   const { slug: raw } = await params;
   const slug = decodeURIComponent(Array.isArray(raw) ? raw.join("/") : raw);
@@ -441,7 +441,6 @@ export default async function PropertyPage({ params }: Props) {
       gallery[expandedGallery.length % gallery.length] ?? heroImage,
     );
   }
-
   const bentoCards = expandedGallery.slice(0, minGalleryCards).map((image, index) => ({
     id: `${property.slug}-${index}`,
     image,
