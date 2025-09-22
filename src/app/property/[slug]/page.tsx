@@ -8,26 +8,29 @@ type IconProps = { className?: string };
 type IconComponent = (props: IconProps) => ReactElement;
 type Props = { params: Promise<{ slug: string | string[] }> };
 
-/* ---------- small helpers ---------- */
-
-// Turn the property.slug into the folder name you created in /public/images/properties/<folder>
-function slugToFolder(s: string) {
-  return s
-    .toLowerCase()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-// build a 5-image local gallery from /public
-function buildLocalGallery(folder: string, title: string, count = 5) {
-  return Array.from({ length: count }, (_, i) => ({
-    src: `/images/properties/${folder}/${i + 1}.jpg`,
-    alt: `${title} photo ${i + 1}`,
-  }));
-}
-
-/* ---------- constants for copy / UI ---------- */
+/** Small safety fallback gallery (only used when property.gallery is empty) */
+const fallbackGallery = [
+  {
+    src: "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=1800&q=80",
+    alt: "Sunlit living room with neutral palette and balcony access",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1616594039964-1916c64dbe8d?auto=format&fit=crop&w=1200&q=80",
+    alt: "Bright bedroom with upholstered headboard and city view",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=1200&q=80",
+    alt: "Minimalist dining space with round table and pendant lighting",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1200&q=80",
+    alt: "Modern bathroom with wood accents and walk-in shower",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80",
+    alt: "Chef's kitchen with warm cabinetry and stone countertops",
+  },
+];
 
 const defaultAmenities = [
   "Cable TV",
@@ -43,6 +46,7 @@ const defaultAmenities = [
 
 const schedule = { checkIn: "3:00 PM", checkOut: "10:00 AM" };
 const houseRules = ["No smoking", "No pets", "No parties or events", "Security deposit required"];
+
 const cancellationPolicies = [
   {
     title: "For stays less than 28 days",
@@ -60,8 +64,7 @@ const cancellationPolicies = [
   },
 ];
 
-/* ---------- icons (unchanged) ---------- */
-
+/** Icons */
 function CheckIcon({ className }: { className?: string }) {
   return (
     <svg aria-hidden viewBox="0 0 20 20" className={className ?? "h-5 w-5"} fill="none">
@@ -72,6 +75,7 @@ function CheckIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+
 function TvIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className={className ?? "h-5 w-5"}>
@@ -217,7 +221,7 @@ function ScheduleIcon({ className }: IconProps) {
   );
 }
 
-/* ---------- compact facts row ---------- */
+/** Compact header facts row (icons + values) */
 function UsersIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className={className ?? "h-6 w-6"}>
@@ -279,7 +283,7 @@ function FactsRow() {
   );
 }
 
-/* ---------- amenity icon helpers ---------- */
+/** Amenity icon helpers */
 const amenityIconMap = new Map<string, IconComponent>([
   ["cable tv", TvIcon],
   ["television", TvIcon],
@@ -303,12 +307,13 @@ function getAmenityIcon(name: string): IconComponent {
   const icon = amenityIconMap.get(name.toLowerCase());
   return icon ?? SparkleIcon;
 }
+
 function AmenityIcon({ name, className }: { name: string; className?: string }) {
   const Icon = getAmenityIcon(name);
   return <Icon className={className} />;
 }
 
-/* ---------- Page (await params in Next 15) ---------- */
+/** Page (await params in Next 15) */
 export default async function PropertyPage({ params }: Props) {
   const { slug: raw } = await params;
   const slug = decodeURIComponent(Array.isArray(raw) ? raw.join("/") : raw);
@@ -323,15 +328,20 @@ export default async function PropertyPage({ params }: Props) {
     );
   }
 
-  // 👉 Build gallery from local files
-  const folder = slugToFolder(property.slug);
-  const gallery = buildLocalGallery(folder, property.name);
-  const bentoCards = gallery.slice(0, 5).map((image, index) => ({
-    id: `${folder}-${index}`,
+  // Use LOCAL gallery only (fallback to small remote set if empty)
+  const gallery = property.gallery?.length ? property.gallery : fallbackGallery;
+
+  // Build 5 bento cards (repeat if fewer than 5)
+  const minCards = 5;
+  const expanded = [...gallery];
+  while (expanded.length < minCards && expanded.length > 0) {
+    expanded.push(expanded[expanded.length % gallery.length]);
+  }
+  const bentoCards = expanded.slice(0, minCards).map((image, index) => ({
+    id: `${property.slug}-${index}`,
     image,
   }));
 
-  // amenities (merge + dedupe)
   const amenities = Array.from(new Set([...property.amenities, ...defaultAmenities])).slice(0, 8);
 
   return (
@@ -343,32 +353,20 @@ export default async function PropertyPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Header block with compact facts row */}
-        <div className="mx-auto max-w-6xl space-y-0 px-6 pb-12">
-          <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(280px,38%)] md:items-end">
-            <div>
-              <p className="text-[0.8rem] font-semibold uppercase tracking-[0.35em] text-neutral-600">
-                The Flex Collection
-              </p>
-              <h1 className="mt-3 text-5xl/tight font-extrabold text-neutral-900 sm:text-6xl">
-                {property.name}
-              </h1>
-              <p className="mt-2 text-xl text-neutral-500">{property.location}</p>
-            </div>
-            <p className="text-lg text-neutral-500 md:text-xl">{property.shortSummary}</p>
-          </div>
-
+        {/* Header: title only */}
+        <div className="mx-auto max-w-6xl space-y-0 px-6 pb-10">
+          <h1 className="mt-3 text-5xl/tight font-extrabold text-neutral-900 sm:text-6xl">
+            {property.name}
+          </h1>
           <FactsRow />
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-6">
         <article className="rounded-3xl border border-[#e2e6db] bg-white/90 p-8 shadow-[0_30px_60px_rgba(18,31,25,0.08)] backdrop-blur">
-          <header className="mb-6 flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-2xl font-semibold text-[#13392f]">About this property</h2>
-              <p className="text-sm text-[#6d7b72]">Thoughtfully curated interiors with hotel-grade comforts.</p>
-            </div>
+          <header className="mb-6">
+            <h2 className="text-2xl font-semibold text-[#13392f]">About this property</h2>
+            <p className="text-sm text-[#6d7b72]">Thoughtfully curated interiors with hotel-grade comforts.</p>
           </header>
           <p className="text-base leading-relaxed text-[#3a4941]">{property.description}</p>
         </article>
