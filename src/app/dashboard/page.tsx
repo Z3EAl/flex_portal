@@ -16,8 +16,17 @@ type Review = {
   status: string | null;
 };
 
+type ReviewSummary = {
+  listing: string;
+  count: number;
+  avgRating: number | null;
+};
+
 export default function Dashboard() {
-  const [data, setData] = useState<{ reviews: Review[]; summary: any[] }>({ reviews: [], summary: [] });
+  const [data, setData] = useState<{ reviews: Review[]; summary: ReviewSummary[] }>({
+    reviews: [],
+    summary: [],
+  });
   const [minRating, setMinRating] = useState<number | "">("");
   const [search, setSearch] = useState("");
   const [approved, setApproved] = useState<Record<number, boolean>>({});
@@ -34,7 +43,7 @@ export default function Dashboard() {
   useEffect(() => {
     fetch("/api/reviews/hostaway")
       .then(r => r.json())
-      .then(setData);
+      .then((payload: { reviews: Review[]; summary: ReviewSummary[] }) => setData(payload));
   }, []);
 
   const filtered = useMemo(() => {
@@ -72,7 +81,7 @@ export default function Dashboard() {
       </header>
 
       <section className="grid md:grid-cols-2 gap-4">
-        {data.summary.map((s: any) => (
+        {data.summary.map(s => (
           <div key={s.listing} className="rounded-2xl border p-4">
             <div className="text-sm text-gray-500">{s.listing}</div>
             <div className="text-3xl font-bold">{s.avgRating ?? "—"}</div>

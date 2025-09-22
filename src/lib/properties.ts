@@ -13,7 +13,8 @@ export const properties: Property[] = [
     slug: "1C Soho Loft",
     name: "1C Soho Loft",
     location: "Soho, London",
-    hero: "/window.svg",
+    hero:
+      "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=2000&q=80",
     shortSummary: "Stylish loft in the heart of Soho, steps to cafes & nightlife.",
     amenities: ["Self check-in", "Fast Wi-Fi", "Kitchen", "Washer/Dryer"],
     description:
@@ -23,7 +24,8 @@ export const properties: Property[] = [
     slug: "2B N1 A - 29 Shoreditch Heights",
     name: "2B N1 A - 29 Shoreditch Heights",
     location: "Shoreditch, London",
-    hero: "/globe.svg",
+    hero:
+      "https://images.unsplash.com/photo-1600585154340-0ef3c08dcdb6?auto=format&fit=crop&w=2000&q=80",
     shortSummary: "Contemporary apartment near Shoreditch galleries & markets.",
     amenities: ["Elevator", "Rooftop Access", "Workspace", "Dishwasher"],
     description:
