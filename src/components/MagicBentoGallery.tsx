@@ -10,13 +10,13 @@ type MagicBentoCard = {
     src: string;
     alt: string;
   };
-  eyebrow?: string;
-  title?: string;
-  description?: string;
 };
 
 type MagicBentoGalleryProps = {
   cards: MagicBentoCard[];
+  showViewAllCta?: boolean;
+  viewAllHref?: string;
+  viewAllLabel?: string;
 };
 
 const RIPPLE_LIFETIME_MS = 600;
@@ -104,7 +104,39 @@ function registerInteractiveHandlers({ element, reducedMotion }: CardEventHandle
   };
 }
 
-function MagicBentoCardView({ card, index, reducedMotion }: { card: MagicBentoCard; index: number; reducedMotion: boolean }) {
+function ArrowIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 20 20"
+      className={className}
+      fill="none"
+    >
+      <path
+        d="M6.5 4.25a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 .53 1.28l-3.5 3.47 3.5 3.47a.75.75 0 0 1-.53 1.28h-6a.75.75 0 0 1 0-1.5H11.7L8.47 8.75a.75.75 0 0 1 0-1.06L11.7 4.5H7.25a.75.75 0 0 1-.75-.75Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+function MagicBentoCardView({
+  card,
+  index,
+  reducedMotion,
+  isLast,
+  showViewAll,
+  viewAllHref,
+  viewAllLabel,
+}: {
+  card: MagicBentoCard;
+  index: number;
+  reducedMotion: boolean;
+  isLast: boolean;
+  showViewAll: boolean;
+  viewAllHref?: string;
+  viewAllLabel: string;
+}) {
   const cardRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -134,17 +166,40 @@ function MagicBentoCardView({ card, index, reducedMotion }: { card: MagicBentoCa
           priority={index === 0}
           unoptimized={card.image.src.startsWith("http")}
         />
-        <div className={styles.cardOverlay}>
-          {card.eyebrow ? <span className={styles.cardLabel}>{card.eyebrow}</span> : null}
-          {card.title ? <h3 className={styles.cardTitle}>{card.title}</h3> : null}
-          {card.description ? <p className={styles.cardDescription}>{card.description}</p> : null}
-        </div>
+        {isLast && showViewAll ? (
+          viewAllHref ? (
+            <a
+              href={viewAllHref}
+              className={styles.cardCta}
+              aria-label={viewAllLabel}
+            >
+              <span className={styles.cardCtaIcon}>
+                <ArrowIcon />
+              </span>
+              <span>{viewAllLabel}</span>
+            </a>
+          ) : (
+            <span className={styles.cardCta} aria-hidden>
+              <span className={styles.cardCtaIcon}>
+                <ArrowIcon />
+              </span>
+              <span>{viewAllLabel}</span>
+            </span>
+          )
+        ) : null}
       </div>
     </div>
   );
 }
 
-export default function MagicBentoGallery({ cards }: MagicBentoGalleryProps) {
+const MIN_CARD_COUNT = 5;
+
+export default function MagicBentoGallery({
+  cards,
+  showViewAllCta = true,
+  viewAllHref,
+  viewAllLabel = "View all photos",
+}: MagicBentoGalleryProps) {
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -164,28 +219,41 @@ export default function MagicBentoGallery({ cards }: MagicBentoGalleryProps) {
       return cards;
     }
 
-    if (cards.length >= 6) {
-      return cards.slice(0, 6);
+    if (cards.length >= MIN_CARD_COUNT) {
+      return cards.slice(0, MIN_CARD_COUNT);
     }
 
     const extended = [...cards];
     let index = 0;
-    while (extended.length < 6) {
+
+    while (extended.length < MIN_CARD_COUNT) {
+      const source = cards[index % cards.length];
       extended.push({
-        ...cards[index % cards.length],
-        id: `${cards[index % cards.length].id}-dup-${extended.length}`,
+        ...source,
+        id: `${source.id}-dup-${extended.length}`,
       });
       index += 1;
     }
 
-    return extended.slice(0, 6);
+    return extended.slice(0, MIN_CARD_COUNT);
   }, [cards]);
+
+  const showViewAll = showViewAllCta && normalizedCards.length > 1;
 
   return (
     <div className={styles.bentoSection} data-bento-section>
       <div className={styles.cardGrid} data-magic-grid>
         {normalizedCards.map((card, index) => (
-          <MagicBentoCardView key={card.id} card={card} index={index} reducedMotion={reducedMotion} />
+          <MagicBentoCardView
+            key={card.id}
+            card={card}
+            index={index}
+            reducedMotion={reducedMotion}
+            isLast={index === normalizedCards.length - 1}
+            showViewAll={showViewAll}
+            viewAllHref={viewAllHref}
+            viewAllLabel={viewAllLabel}
+          />
         ))}
       </div>
     </div>
