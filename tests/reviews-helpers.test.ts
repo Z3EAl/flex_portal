@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { calculateAverageRating } from "../src/lib/reviews.ts";
+import { calculateAverageRating } from "../src/lib/reviews";
 
 test("calculateAverageRating ignores unrated entries", () => {
   const result = calculateAverageRating(

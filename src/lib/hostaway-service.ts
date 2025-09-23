@@ -8,9 +8,9 @@ import {
   parseHostawayPayload,
   summarizeReviews,
   type HostawayReview,
-} from "./hostaway.ts";
-import { loadGoogleReviews } from "./google-service.ts";
-import type { Review, ReviewSummary } from "./reviews.ts";
+} from "./hostaway";
+import { loadGoogleReviews } from "./google-service";
+import type { Review, ReviewSummary } from "./reviews";
 
 const tokenResponseSchema = z.object({
   access_token: z.string().optional(),
