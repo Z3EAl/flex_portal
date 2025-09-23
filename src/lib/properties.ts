@@ -10,6 +10,7 @@ export type Property = {
   amenities: string[];
   description: string;
   gallery: PropertyImage[]; // local images
+  googlePlaceId?: string;
 };
 
 // Helper to build gallery entries from /public
@@ -25,6 +26,7 @@ export const properties: Property[] = [
     slug: "1C Soho Loft",
     name: "1C Soho Loft",
     location: "Soho, London",
+    googlePlaceId: "ChIJSohoLoft",
     shortSummary: "Stylish loft in the heart of Soho, steps to cafes & nightlife.",
     amenities: ["Self check-in", "Fast Wi-Fi", "Kitchen", "Washer/Dryer"],
     description:
@@ -42,6 +44,7 @@ export const properties: Property[] = [
     slug: "2B N1 A - 29 Shoreditch Heights",
     name: "2B N1 A - 29 Shoreditch Heights",
     location: "Shoreditch, London",
+    googlePlaceId: "ChIJShoreditchHeights",
     shortSummary: "Contemporary apartment near Shoreditch galleries & markets.",
     amenities: ["Elevator", "Rooftop Access", "Workspace", "Dishwasher"],
     description:
@@ -55,10 +58,11 @@ export const properties: Property[] = [
     ]),
     hero: `/images/properties/2b-n1-a-29-shoreditch-heights/1.jpg`,
   },
-  { 
+  {
     slug: "Vast 2 Bed Balcony Flat in Highbury",
     name: "Vast 2 Bed Balcony Flat in Highbury",
     location: "Highbury, London",
+    googlePlaceId: "ChIJHighburyBalcony",
     shortSummary: "Family-friendly flat with balcony and green views.",
     amenities: ["Heating", "Smoke Detector", "Fast Wi-Fi", "Kitchen"],
     description:

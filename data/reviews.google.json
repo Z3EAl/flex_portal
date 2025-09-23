@@ -1,0 +1,84 @@
+{
+  "places": [
+    {
+      "placeId": "ChIJSohoLoft",
+      "listing": "1C Soho Loft",
+      "name": "places/ChIJSohoLoft",
+      "googleMapsUri": "https://maps.google.com/?cid=soho-loft",
+      "reviews": [
+        {
+          "reviewId": "g-1",
+          "rating": 4.7,
+          "text": "Loved the light and central location. Check-in was seamless and the loft was spotless.",
+          "publishTime": "2024-03-02T10:15:00Z",
+          "authorAttribution": {
+            "displayName": "Jessie Carter"
+          }
+        },
+        {
+          "reviewId": "g-2",
+          "starRating": "FIVE",
+          "originalText": {
+            "text": "Incredible stay for our weekend in London. Noise from the street was the only downside."
+          },
+          "publishTime": "2023-12-18T08:42:00Z",
+          "authorAttribution": {
+            "displayName": "Leah Wood"
+          }
+        }
+      ]
+    },
+    {
+      "placeId": "ChIJShoreditchHeights",
+      "listing": "2B N1 A - 29 Shoreditch Heights",
+      "name": "places/ChIJShoreditchHeights",
+      "googleMapsUri": "https://maps.google.com/?cid=shoreditch-heights",
+      "reviews": [
+        {
+          "reviewId": "g-3",
+          "rating": 4.2,
+          "text": "Stylish apartment with every amenity we needed. Rooftop was a highlight!",
+          "publishTime": "2024-01-25T17:30:00Z",
+          "authorAttribution": {
+            "displayName": "Marco Silva"
+          }
+        },
+        {
+          "reviewId": "g-4",
+          "rating": 3.8,
+          "text": "Great neighborhood and decor, but the elevator was out one evening.",
+          "publishTime": "2023-11-09T19:05:00Z",
+          "authorAttribution": {
+            "displayName": "Emily Zhang"
+          }
+        }
+      ]
+    },
+    {
+      "placeId": "ChIJHighburyBalcony",
+      "listing": "Vast 2 Bed Balcony Flat in Highbury",
+      "name": "places/ChIJHighburyBalcony",
+      "googleMapsUri": "https://maps.google.com/?cid=highbury-balcony",
+      "reviews": [
+        {
+          "reviewId": "g-5",
+          "rating": 4.9,
+          "text": "Family of four fit comfortably. Balcony mornings were a treat.",
+          "publishTime": "2024-02-14T07:55:00Z",
+          "authorAttribution": {
+            "displayName": "Nora Patel"
+          }
+        },
+        {
+          "reviewId": "g-6",
+          "rating": 4.5,
+          "text": "Quiet, spacious, and spotless. We will be back!",
+          "publishTime": "2023-10-03T12:10:00Z",
+          "authorAttribution": {
+            "displayName": "Ian Mitchell"
+          }
+        }
+      ]
+    }
+  ]
+}

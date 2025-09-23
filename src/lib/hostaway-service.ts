@@ -9,6 +9,7 @@ import {
   summarizeReviews,
   type HostawayReview,
 } from "./hostaway.ts";
+import { loadGoogleReviews } from "./google-service.ts";
 import type { Review, ReviewSummary } from "./reviews.ts";
 
 const tokenResponseSchema = z.object({
@@ -119,6 +120,10 @@ export type HostawayLoadResult = {
     envUseApi: string;
     hostawayStatus: string;
     hostawayCount: number;
+    googleSource: string;
+    googleStatus: string;
+    googleCount: number;
+    googleEnvUseApi: string;
   };
 };
 
@@ -152,7 +157,11 @@ export async function loadHostawayReviews(
     dataSource = "mock";
   }
 
-  const reviews = raw.map(normalizeHostawayReview);
+  const hostawayReviews = raw.map(normalizeHostawayReview);
+
+  const google = await loadGoogleReviews();
+
+  const reviews = [...hostawayReviews, ...google.reviews];
   const summary = summarizeReviews(reviews);
 
   return {
@@ -163,6 +172,10 @@ export async function loadHostawayReviews(
       envUseApi: String(process.env.HOSTAWAY_USE_API === "true"),
       hostawayStatus: hostStatus,
       hostawayCount: hostCount,
+      googleSource: google.meta.source,
+      googleStatus: google.meta.status,
+      googleCount: google.meta.count,
+      googleEnvUseApi: google.meta.envUseApi,
     },
   };
 }
