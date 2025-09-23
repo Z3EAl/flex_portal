@@ -77,6 +77,7 @@ test("loadHostawayReviews returns normalized payload", async () => {
 
   assert.equal(meta.dataSource, "mock");
   assert.equal(meta.envUseApi, "false");
+  assert.equal(meta.googleEnvUseApi, "false");
 
   assert.ok(Array.isArray(reviews));
   assert.ok(reviews.length > 0);
@@ -84,6 +85,8 @@ test("loadHostawayReviews returns normalized payload", async () => {
   assert.ok(summary.length > 0);
 
   const sample = reviews[0];
+
+  assert.ok(reviews.some((review) => review.channel === "google"));
 
   assert.equal(typeof sample.id, "number");
   assert.equal(typeof sample.listing, "string");

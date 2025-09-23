@@ -1,6 +1,4 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
-import hostawaySeed from "../../../../../data/reviews.hostaway.json";
 
 import { loadHostawayReviews } from "@/lib/hostaway-service";
 
@@ -20,6 +18,10 @@ export async function GET(request: Request) {
         "x-env-use-api": meta.envUseApi,
         "x-hostaway-raw-count": String(meta.hostawayCount),
         "x-hostaway-status": meta.hostawayStatus,
+        "x-google-source": meta.googleSource,
+        "x-google-status": meta.googleStatus,
+        "x-google-count": String(meta.googleCount),
+        "x-google-env-use-api": meta.googleEnvUseApi,
       },
     }
   );
