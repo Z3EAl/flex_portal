@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
+import hostawaySeed from "../../../../../data/reviews.hostaway.json";
 
 /** --- Types the frontend expects --- */
 type Review = {
@@ -8,7 +10,7 @@ type Review = {
   date: string;
   rating: number | null;
   categories: Record<string, number | null>;
-  channel: "hostaway" | string;
+  channel: string;
   type: string;
   text: string;
   status: string | null;
@@ -20,64 +22,70 @@ type ReviewSummary = {
   avgRating: number | null;
 };
 
-/** --- Mock data (so UI always works) --- */
-const MOCK: any[] = [
-  {
-    id: 1001,
-    type: "guest-to-host",
-    status: "published",
-    rating: 7.5,
-    publicReview: "Check-in was smooth. Wi-Fi could be better.",
-    reviewCategory: [
-      { category: "cleanliness", rating: 8 },
-      { category: "communication", rating: 8 },
-    ],
-    submittedAt: "2022-06-01 00:00:00",
-    guestName: "Priya",
-    listingName: "1C Soho Loft",
-  },
-  {
-    id: 1002,
-    type: "guest-to-host",
-    status: "published",
-    rating: 8,
-    publicReview: "Great location, a bit noisy at night.",
-    reviewCategory: [{ category: "location", rating: 9 }],
-    submittedAt: "2021-02-10 00:00:00",
-    guestName: "Alex M",
-    listingName: "1C Soho Loft",
-  },
-  {
-    id: 1003,
-    type: "guest-to-host",
-    status: "published",
-    rating: 10,
-    publicReview: "Lovely modern flat near everything.",
-    reviewCategory: [
-      { category: "cleanliness", rating: 10 },
-      { category: "communication", rating: 10 },
-    ],
-    submittedAt: "2022-05-20 00:00:00",
-    guestName: "Sam",
-    listingName: "2B N1 A - 29 Shoreditch Heights",
-  },
-];
+/** --- Schema helpers (Hostaway response + mock seed) --- */
+const ratingValueSchema = z
+  .union([z.number(), z.string(), z.null(), z.undefined()])
+  .transform((value) => {
+    if (value === null || value === undefined || value === "") return null;
+    const numeric = typeof value === "string" ? Number(value) : value;
+    return Number.isFinite(numeric) ? Number(numeric) : null;
+  });
+
+const hostawayReviewSchema = z.object({
+  id: z.coerce.number(),
+  type: z.string().optional(),
+  status: z.union([z.string(), z.null()]).optional(),
+  rating: ratingValueSchema,
+  publicReview: z.string().optional(),
+  reviewCategory: z
+    .array(
+      z.object({
+        category: z.string(),
+        rating: ratingValueSchema,
+      })
+    )
+    .optional(),
+  submittedAt: z.string().optional(),
+  guestName: z.string().optional(),
+  listingName: z.string().optional(),
+  channel: z.string().optional(),
+});
+
+const hostawayPayloadSchema = z
+  .object({
+    result: z.array(hostawayReviewSchema).optional(),
+    data: z.array(hostawayReviewSchema).optional(),
+  })
+  .transform((payload) => payload.result ?? payload.data ?? []);
+
+type HostawayReview = z.infer<typeof hostawayReviewSchema>;
+
+const tokenResponseSchema = z.object({
+  access_token: z.string().optional(),
+  expires_in: z.union([z.number(), z.string()]).optional(),
+});
+
+/** --- Mock data (parsed from provided Hostaway JSON) --- */
+const MOCK: HostawayReview[] = hostawayPayloadSchema.parse(hostawaySeed);
 
 /** Normalize Hostaway (or mock) item to our Review shape */
-function normalize(item: any): Review {
+function normalize(item: HostawayReview): Review {
   const cats: Record<string, number | null> = {};
-  (item.reviewCategory ?? []).forEach((c: any) => {
-    if (c?.category) cats[c.category] = c?.rating ?? null;
+  (item.reviewCategory ?? []).forEach((category) => {
+    if (category?.category) cats[category.category] = category?.rating ?? null;
   });
+
+  const submitted = item.submittedAt ? new Date(item.submittedAt) : new Date();
+  const date = Number.isNaN(submitted.getTime()) ? new Date() : submitted;
 
   return {
     id: Number(item.id),
     listing: String(item.listingName ?? ""),
     guest: String(item.guestName ?? ""),
-    date: new Date(item.submittedAt ?? Date.now()).toISOString(),
+    date: date.toISOString(),
     rating: item.rating ?? null,
     categories: cats,
-    channel: "hostaway",
+    channel: String(item.channel ?? "hostaway"),
     type: String(item.type ?? "guest-to-host"),
     text: String(item.publicReview ?? "").trim(),
     status: item.status ?? null,
@@ -136,9 +144,13 @@ async function getAccessToken(): Promise<string | null> {
 
   if (!res.ok) return null;
 
-  const json: any = await res.json();
-  const token = json?.access_token as string | undefined;
-  const expiresIn = Number(json?.expires_in) || 3600;
+  const parsed = tokenResponseSchema.safeParse(await res.json());
+  if (!parsed.success) return null;
+
+  const token = parsed.data.access_token;
+  const rawExpires = parsed.data.expires_in;
+  const expiresInValue = rawExpires !== undefined ? Number(rawExpires) : 3600;
+  const expiresIn = Number.isFinite(expiresInValue) && expiresInValue > 0 ? expiresInValue : 3600;
 
   if (!token) return null;
 
@@ -150,7 +162,7 @@ async function getAccessToken(): Promise<string | null> {
   return token;
 }
 
-async function fetchFromHostaway(): Promise<{ list: any[]; status: number } | null> {
+async function fetchFromHostaway(): Promise<{ list: HostawayReview[]; status: number } | null> {
   try {
     const useApi = process.env.HOSTAWAY_USE_API === "true";
     if (!useApi) return null;
@@ -176,10 +188,12 @@ async function fetchFromHostaway(): Promise<{ list: any[]; status: number } | nu
     if (!res.ok) return { list: [], status };
 
     const json = await res.json();
-    const list = json?.result ?? json?.data ?? [];
-    if (!Array.isArray(list)) return { list: [], status };
+    const parsed = hostawayPayloadSchema.safeParse(json);
+    if (!parsed.success) {
+      return { list: [], status };
+    }
 
-    return { list, status };
+    return { list: parsed.data, status };
   } catch {
     return null;
   }
@@ -190,7 +204,7 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const source = url.searchParams.get("source"); // "hostaway-only" | "hostaway" | "mock"
 
-  let raw: any[] = [];
+  let raw: HostawayReview[] = [];
   let dataSource = "mock";
   let hostStatus = "n/a";
   let hostCount = 0;
