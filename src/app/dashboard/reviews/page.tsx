@@ -234,13 +234,15 @@ export default function ReviewsDashboard() {
       {/* Listing summaries */}
       {data.summary.length > 0 && (
         <section className="grid gap-4 md:grid-cols-3">
-          {data.summary.map(s => (
-            <div key={s.listing} className="dash-card p-4">
-              <div className="text-sm text-[#6d7b72]">{s.listing}</div>
-              <div className="mt-1 text-3xl font-semibold text-[color:var(--foreground)]">
-                {s.avgRating !== null ? s.avgRating.toFixed(1) : "—"}
+          {data.summary.map((s) => (
+            <div key={s.listing} className="dash-card flex h-full flex-col justify-between p-4">
+              <div className="text-sm font-medium leading-snug text-[#2f3e35]">{s.listing}</div>
+              <div className="mt-auto flex flex-col items-end gap-1 text-right">
+                <div className="text-3xl font-semibold text-[color:var(--foreground)]">
+                  {s.avgRating !== null ? s.avgRating.toFixed(1) : "—"}
+                </div>
+                <div className="text-xs text-[#6d7b72]">{s.count} reviews</div>
               </div>
-              <div className="text-xs text-[#6d7b72]">{s.count} reviews</div>
             </div>
           ))}
         </section>
