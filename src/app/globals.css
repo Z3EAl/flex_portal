@@ -211,6 +211,7 @@ input[type="checkbox"]{ accent-color: var(--accent); }
   padding:.75rem 1rem;
   border-bottom:1px solid var(--border);
 }
+.summary-table thead th.text-right{ text-align:right; }
 
 .summary-table tbody td{
   padding:1rem;
