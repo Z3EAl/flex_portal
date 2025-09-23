@@ -39,6 +39,14 @@
   - Category chips highlight low sub-scores (< 8.5) to quickly spot recurring issues.
   - Direct link to the property page plus approval toggle.
 
+## Requirement Checklist
+| Assignment Requirement | Implementation Summary |
+| --- | --- |
+| Mock Hostaway reviews, normalise by listing/type/channel/date, and expose via `GET /api/reviews/hostaway` | Route pulls sandbox data when enabled, falls back to the bundled mock JSON, and returns typed review records with listing, ISO date, review type, channel, rating (with fallbacks), and category map plus per-listing summaries. |
+| Build a manager dashboard that surfaces per-property performance, filtering, sorting, trend-spotting, and approval controls | `/dashboard/reviews` delivers KPI cards, per-listing summaries, a “category signals” insight panel, search, rating threshold, category/channel/time filters, rating/time sorts, and approval toggles persisted to `localStorage`. |
+| Allow approved reviews to surface on a public-facing property page that mirrors Flex Living’s layout | Property detail route reuses the official hero layout, amenity/policy sections, and only renders reviews chosen in the dashboard through the shared API data. |
+| Document Google Reviews exploration | Findings and a suggested implementation path are recorded below. |
+
 ### Property Page (`/property/[slug]`)
 - Uses a bento-style gallery that auto-fills to five tiles and plays nicely with local images.
 - Shows rich property details (amenities, policies, schedule) styled after Flex Living’s public marketing pages.
@@ -55,4 +63,5 @@
 
 ## Testing Notes
 - Run `npm run lint` to execute the Next.js ESLint suite.
+- Run `npm test` to exercise lightweight normalization/unit checks for the Hostaway adapters.
 - The dashboard and property page rely on browser APIs (`localStorage`, `matchMedia`), so full end-to-end validation should include a quick manual smoke test in the browser after `npm run dev`.

@@ -3,25 +3,18 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { formatDisplayDate } from "@/lib/dates";
+import {
+  calculateAverageRating,
+  type ReviewsResponse,
+} from "@/lib/reviews";
 
-type Review = {
-  id: number;
-  listing: string;
-  guest: string;
-  date: string;
-  rating: number | null;
-  categories: Record<string, number | null>;
-  channel: string;
-  type: string;
-  text: string;
-  status: string | null;
-};
-
-type ReviewSummary = {
-  listing: string;
-  count: number;
-  avgRating: number | null;
-};
+function humanize(value: string) {
+  return value
+    .replace(/[_-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
 
 function humanize(value: string) {
   return value
@@ -32,7 +25,7 @@ function humanize(value: string) {
 }
 
 export default function ReviewsDashboard() {
-  const [data, setData] = useState<{ reviews: Review[]; summary: ReviewSummary[] }>({ reviews: [], summary: [] });
+  const [data, setData] = useState<ReviewsResponse>({ reviews: [], summary: [] });
   const [minRating, setMinRating] = useState<number | "">("");
   const [search, setSearch] = useState("");
   const [approved, setApproved] = useState<Record<number, boolean>>({});
@@ -47,7 +40,7 @@ export default function ReviewsDashboard() {
   useEffect(() => {
     fetch("/api/reviews/hostaway")
       .then(r => r.json())
-      .then((payload: { reviews: Review[]; summary: ReviewSummary[] }) => setData(payload));
+      .then((payload: ReviewsResponse) => setData(payload));
   }, []);
 
   const categoryOptions = useMemo(() => {
@@ -137,8 +130,7 @@ export default function ReviewsDashboard() {
 
   const total = data.reviews.length;
   const approvedCount = data.reviews.filter(r => approved[r.id]).length;
-  const avg =
-    total === 0 ? null : Math.round((data.reviews.reduce((a, r) => a + (r.rating ?? 0), 0) / total) * 10) / 10;
+  const avg = useMemo(() => calculateAverageRating(data.reviews, 1), [data.reviews]);
 
   return (
     <main className="space-y-6">
