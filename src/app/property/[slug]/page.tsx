@@ -1,4 +1,5 @@
 import ApprovedReviews from "@/components/ApprovedReviews";
+import GiftCardButton from "@/components/GiftCardButton";
 import MagicBentoGallery from "@/components/MagicBentoGallery";
 import { getPropertyBySlug } from "@/lib/properties";
 import type { ReactElement } from "react";
@@ -519,12 +520,15 @@ export default async function PropertyPage({ params }: Props) {
                   </div>
                 </fieldset>
                 <div className="space-y-3">
-                  <button type="submit" className="w-full rounded-2xl bg-[#134e48] px-4 py-3 text-center text-base font-semibold text-white shadow-lg shadow-[#134e4830] transition hover:bg-[#0f403b]">
+                  <GiftCardButton
+                    type="submit"
+                    className="w-full rounded-2xl bg-[#134e48] px-4 py-3 text-center text-base font-semibold text-white shadow-lg shadow-[#134e4830] transition hover:bg-[#0f403b]"
+                  >
                     Check availability
-                  </button>
-                  <button type="button" className="w-full rounded-2xl border border-[#134e48] px-4 py-3 text-center text-base font-semibold text-[#134e48] transition hover:bg-[#ecf4ef]">
+                  </GiftCardButton>
+                  <GiftCardButton className="w-full rounded-2xl border border-[#134e48] px-4 py-3 text-center text-base font-semibold text-[#134e48] transition hover:bg-[#ecf4ef]">
                     Send inquiry
-                  </button>
+                  </GiftCardButton>
                 </div>
                 <label className="flex items-center gap-3 rounded-2xl bg-[#f1f6f2] px-4 py-3 text-sm text-[#536156]">
                   <span className="relative inline-flex h-5 w-9 items-center">
@@ -540,9 +544,9 @@ export default async function PropertyPage({ params }: Props) {
             <div className="rounded-3xl border border-[#e2e6db] bg-[#f8faf6] p-6 text-center shadow-sm">
               <h3 className="text-lg font-semibold text-[#13392f]">Need help planning?</h3>
               <p className="mt-2 text-sm text-[#5f6f65]">Our concierge team can arrange transport, private chefs, and more.</p>
-              <button type="button" className="mt-4 inline-flex items-center justify-center rounded-full border border-[#134e48] px-5 py-2 text-sm font-semibold text-[#134e48] transition hover:bg-[#ecf4ef]">
+              <GiftCardButton className="mt-4 inline-flex items-center justify-center rounded-full border border-[#134e48] px-5 py-2 text-sm font-semibold text-[#134e48] transition hover:bg-[#ecf4ef]">
                 Contact concierge
-              </button>
+              </GiftCardButton>
             </div>
           </aside>
         </div>
