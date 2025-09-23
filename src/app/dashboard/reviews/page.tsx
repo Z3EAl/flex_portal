@@ -276,14 +276,14 @@ export default function ReviewsDashboard() {
                 </div>
               ))
             : data.summary.map((s) => (
-                <div key={s.listing} className="dash-card flex h-full flex-col justify-between gap-6 p-4">
+                <div key={s.listing} className="dash-card flex h-full flex-col p-4">
                   <div className="space-y-2">
                     <div className="text-sm font-semibold leading-snug text-[#13392f]">{s.listing}</div>
                     <span className="inline-flex w-fit items-center rounded-full bg-[#eef5ef] px-2.5 py-1 text-xs font-medium text-[#2f3e35]">
                       {s.count} reviews
                     </span>
                   </div>
-                  <div className="flex items-end justify-between gap-3">
+                  <div className="mt-auto pt-6 flex items-end justify-between gap-3">
                     <span className="text-xs font-medium uppercase tracking-wide text-[#6d7b72]">Average rating</span>
                     <div className="text-right">
                       <div className="text-3xl font-semibold leading-none text-[color:var(--foreground)]">
