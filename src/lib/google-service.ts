@@ -1,12 +1,15 @@
-import googleSeedData from "../../data/reviews.google.json";
+import { createRequire } from "node:module";
 import {
   normalizeGoogleReview,
   parseGoogleMock,
   parseGooglePlaceResponse,
   type GoogleMockPlace,
-} from "./google";
-import { properties } from "./properties";
-import type { Review } from "./reviews";
+} from "./google.ts";
+import { properties } from "./properties.ts";
+import type { Review } from "./reviews.ts";
+
+const require = createRequire(import.meta.url);
+const googleSeedData = require("../../data/reviews.google.json");
 
 const MOCK: GoogleMockPlace[] = parseGoogleMock(googleSeedData);
 
