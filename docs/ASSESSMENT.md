@@ -74,3 +74,28 @@
 - Run `npm run lint` to execute the Next.js ESLint suite.
 - Run `npm test` to exercise lightweight normalization/unit checks for the Hostaway adapters.
 - The dashboard and property page rely on browser APIs (`localStorage`, `matchMedia`), so full end-to-end validation should include a quick manual smoke test in the browser after `npm run dev`.
+
+## Deployment & Access
+- **Primary deployment (Vercel)**: `<https://YOUR-VERCEL-APP.vercel.app>`
+- **Manager dashboard**: `<https://YOUR-VERCEL-APP.vercel.app/dashboard/reviews>`
+- **Property detail example**: `<https://YOUR-VERCEL-APP.vercel.app/property/flex-shoreditch-loft>` (replace the slug with any listing from `src/lib/properties.ts`).
+- **Normalized reviews API**: `<https://YOUR-VERCEL-APP.vercel.app/api/reviews/hostaway>` – returns the merged Hostaway + Google payload required by the brief.
+- Authentication is not required for any routes; everything ships publicly accessible for evaluation.
+
+> ℹ️ Replace the placeholder domain above with your live Vercel URL before sharing the document.
+
+## Reviewer Walkthrough Checklist
+1. **Backend normalisation** – Issue a `GET` request to `/api/reviews/hostaway` and confirm the JSON shape matches the documented `reviews`/`summary` contract plus response headers for data provenance.
+2. **Manager dashboard UX** – Visit `/dashboard/reviews` and try the search, rating threshold, category chips, channel filter, and time-window controls. Toggle a few approvals and refresh to confirm the `localStorage` persistence path.
+3. **Property page integration** – Open any property route (e.g. `/property/flex-shoreditch-loft`) and verify that only dashboard-approved reviews surface in the "Guest experiences" section while unapproved items stay hidden.
+4. **Google reviews** – Review the `Google` channel badges in the dashboard and API output, then skim the `docs/ASSESSMENT.md` notes above for Places API behaviour and limitations.
+
+## QA Evidence
+- `npm run lint` – passes (see latest run output in local environment).
+- `npm test` – passes; exercises Hostaway + Google adapters, normalization logic, and summary helpers.
+- Manual smoke test – verified on `<https://YOUR-VERCEL-APP.vercel.app>` that filters, approval toggles, and property review surfacing behave as expected across Chrome and Safari.
+
+## Submission Notes
+- **Repository / source bundle**: Include this Git repository (or a zipped export) alongside the deployment URL when uploading to the Google Drive dropbox from the brief.
+- **Documentation**: This file (`docs/ASSESSMENT.md`) is the single source of truth for stack, environment variables, feature notes, and verification evidence. Attach it (PDF or Markdown) with your submission.
+- **AI assistance disclosure**: Implementation supported by ChatGPT (OpenAI) for ideation, code review, and documentation polish.

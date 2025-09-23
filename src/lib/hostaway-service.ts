@@ -1,14 +1,16 @@
 import { z } from "zod";
-
-import hostawaySeedData from "../../data/reviews.hostaway.json";
+import { createRequire } from "node:module";
 import {
   normalizeHostawayReview,
   parseHostawayPayload,
   summarizeReviews,
   type HostawayReview,
-} from "./hostaway";
-import { loadGoogleReviews } from "./google-service";
-import type { Review, ReviewSummary } from "./reviews";
+} from "./hostaway.ts";
+import { loadGoogleReviews } from "./google-service.ts";
+import type { Review, ReviewSummary } from "./reviews.ts";
+
+const require = createRequire(import.meta.url);
+const hostawaySeedData = require("../../data/reviews.hostaway.json");
 
 const tokenResponseSchema = z.object({
   access_token: z.string().optional(),

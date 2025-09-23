@@ -5,8 +5,8 @@ import {
   normalizeHostawayReview,
   summarizeReviews,
   type HostawayReview,
-} from "../src/lib/hostaway";
-import { loadHostawayReviews } from "../src/lib/hostaway-service";
+} from "../src/lib/hostaway.ts";
+import { loadHostawayReviews } from "../src/lib/hostaway-service.ts";
 
 test("normalizeHostawayReview derives rating from category scores", () => {
   const review: HostawayReview = {
