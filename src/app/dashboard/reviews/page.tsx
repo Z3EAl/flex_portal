@@ -18,6 +18,8 @@ function humanize(value: string) {
 
 export default function ReviewsDashboard() {
   const [data, setData] = useState<ReviewsResponse>({ reviews: [], summary: [] });
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [minRating, setMinRating] = useState<number | "">("");
   const [search, setSearch] = useState("");
   const [approved, setApproved] = useState<Record<number, boolean>>({});
@@ -26,13 +28,44 @@ export default function ReviewsDashboard() {
   const [timeRange, setTimeRange] = useState<"all" | "90" | "180" | "365">("all");
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest" | "rating-desc" | "rating-asc">("newest");
 
-  useEffect(() => { const s = localStorage.getItem("approved"); if (s) setApproved(JSON.parse(s)); }, []);
-  useEffect(() => { localStorage.setItem("approved", JSON.stringify(approved)); }, [approved]);
+  useEffect(() => {
+    const s = localStorage.getItem("approved");
+    if (s) setApproved(JSON.parse(s));
+  }, []);
 
   useEffect(() => {
+    localStorage.setItem("approved", JSON.stringify(approved));
+  }, [approved]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    setLoading(true);
     fetch("/api/reviews/hostaway")
-      .then(r => r.json())
-      .then((payload: ReviewsResponse) => setData(payload));
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((payload: ReviewsResponse) => {
+        if (!mounted) return;
+        setData(payload);
+        setLoadError(null);
+      })
+      .catch((error: unknown) => {
+        console.error("Failed to load reviews", error);
+        if (!mounted) return;
+        setLoadError("We couldn't load the latest reviews. Please try again.");
+      })
+      .finally(() => {
+        if (!mounted) return;
+        setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const categoryOptions = useMemo(() => {
@@ -232,19 +265,35 @@ export default function ReviewsDashboard() {
       </section>
 
       {/* Listing summaries */}
-      {data.summary.length > 0 && (
+      {(loading || data.summary.length > 0) && (
         <section className="grid gap-4 md:grid-cols-3">
-          {data.summary.map((s) => (
-            <div key={s.listing} className="dash-card flex h-full flex-col justify-between p-4">
-              <div className="text-sm font-medium leading-snug text-[#2f3e35]">{s.listing}</div>
-              <div className="mt-auto flex flex-col items-end gap-1 text-right">
-                <div className="text-3xl font-semibold text-[color:var(--foreground)]">
-                  {s.avgRating !== null ? s.avgRating.toFixed(1) : "—"}
+          {loading
+            ? Array.from({ length: 3 }).map((_, index) => (
+                <div key={`summary-skeleton-${index}`} className="dash-card space-y-4 p-4">
+                  <div className="h-4 w-3/4 rounded bg-[#e7f1ec] animate-pulse" />
+                  <div className="h-3 w-1/2 rounded bg-[#edf5ef] animate-pulse" />
+                  <div className="h-10 w-20 rounded bg-[#dbe6dc] animate-pulse" />
                 </div>
-                <div className="text-xs text-[#6d7b72]">{s.count} reviews</div>
-              </div>
-            </div>
-          ))}
+              ))
+            : data.summary.map((s) => (
+                <div key={s.listing} className="dash-card flex h-full flex-col justify-between gap-6 p-4">
+                  <div className="space-y-2">
+                    <div className="text-sm font-semibold leading-snug text-[#13392f]">{s.listing}</div>
+                    <span className="inline-flex w-fit items-center rounded-full bg-[#eef5ef] px-2.5 py-1 text-xs font-medium text-[#2f3e35]">
+                      {s.count} reviews
+                    </span>
+                  </div>
+                  <div className="flex items-end justify-between gap-3">
+                    <span className="text-xs font-medium uppercase tracking-wide text-[#6d7b72]">Average rating</span>
+                    <div className="text-right">
+                      <div className="text-3xl font-semibold leading-none text-[color:var(--foreground)]">
+                        {s.avgRating !== null ? s.avgRating.toFixed(1) : "—"}
+                      </div>
+                      <div className="text-xs text-[#6d7b72]">out of 10</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
         </section>
       )}
 
@@ -277,11 +326,40 @@ export default function ReviewsDashboard() {
       {/* Reviews list */}
       <section className="space-y-2">
         <div className="h2">All reviews</div>
-        {visible.length === 0 && <div className="text-[#6d7b72]">No reviews match the current filters.</div>}
+        {loadError && (
+          <div className="rounded border border-[#f8d3c7] bg-[#fff4ef] p-3 text-sm text-[#a13c22]">
+            {loadError}
+          </div>
+        )}
+        {!loading && !loadError && visible.length === 0 && (
+          <div className="text-[#6d7b72]">No reviews match the current filters.</div>
+        )}
 
         <div className="grid gap-3">
-          {visible.map(r => (
-            <article key={r.id} className="dash-card p-4">
+          {loading
+            ? Array.from({ length: 4 }).map((_, index) => (
+                <article key={`review-skeleton-${index}`} className="dash-card p-4">
+                  <div className="space-y-4 animate-pulse">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="space-y-2">
+                        <div className="h-4 w-32 rounded bg-[#e7f1ec]" />
+                        <div className="h-3 w-24 rounded bg-[#edf5ef]" />
+                      </div>
+                      <div className="h-3 w-20 rounded bg-[#e7f1ec]" />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-3 w-full rounded bg-[#edf5ef]" />
+                      <div className="h-3 w-11/12 rounded bg-[#edf5ef]" />
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <div className="h-6 w-28 rounded-full bg-[#edf5ef]" />
+                      <div className="h-6 w-24 rounded-full bg-[#edf5ef]" />
+                    </div>
+                  </div>
+                </article>
+              ))
+            : visible.map(r => (
+                <article key={r.id} className="dash-card p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <Link
