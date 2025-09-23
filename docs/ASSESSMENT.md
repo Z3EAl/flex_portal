@@ -51,6 +51,7 @@
 - Uses a bento-style gallery that auto-fills to five tiles and plays nicely with local images.
 - Shows rich property details (amenities, policies, schedule) styled after Flex Living’s public marketing pages.
 - `ApprovedReviews` component fetches the same API, applies the persisted approval state, sorts descending by date, and renders only the selected reviews inside the property layout.
+- Easter egg alert: the primary property page buttons hide a playful surprise—give them a click and enjoy the message.
 
 ## Google Reviews Exploration
 - Investigated Google Places API for server-side ingestion. Viable options require enabling the **Places API** and using the **Place Details** endpoint with `reviews` fields.
