@@ -34,7 +34,7 @@
       "id": 7455,
       "type": "guest-to-host",
       "status": "published",
-      "rating": null,
+      "rating": 9.5,
       "publicReview": "Check-in was smooth. Wi-Fi could be better.",
       "reviewCategory": [
         {"category": "communication", "rating": 9},

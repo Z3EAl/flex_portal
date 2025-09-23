@@ -16,14 +16,6 @@ function humanize(value: string) {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function humanize(value: string) {
-  return value
-    .replace(/[_-]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
-
 export default function ReviewsDashboard() {
   const [data, setData] = useState<ReviewsResponse>({ reviews: [], summary: [] });
   const [minRating, setMinRating] = useState<number | "">("");
