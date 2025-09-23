@@ -4,7 +4,7 @@ import {
   calculateAverageRating,
   type Review,
   type ReviewSummary,
-} from "./reviews.ts";
+} from "./reviews";
 
 export const ratingValueSchema = z
   .union([z.number(), z.string(), z.null(), z.undefined()])

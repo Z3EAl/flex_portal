@@ -7,9 +7,9 @@ import {
   parseGoogleMock,
   parseGooglePlaceResponse,
   type GoogleMockPlace,
-} from "./google.ts";
-import { properties } from "./properties.ts";
-import type { Review } from "./reviews.ts";
+} from "./google";
+import { properties } from "./properties";
+import type { Review } from "./reviews";
 
 const currentDir = dirname(fileURLToPath(import.meta.url));
 const googleSeedPath = resolve(currentDir, "../../data/reviews.google.json");

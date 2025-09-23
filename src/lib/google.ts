@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { Review } from "./reviews.ts";
+import type { Review } from "./reviews";
 
 const starRatingMap: Record<string, number> = {
   ONE: 1,

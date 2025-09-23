@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { loadGoogleReviews } from "../src/lib/google-service.ts";
+import { loadGoogleReviews } from "../src/lib/google-service";
 
 test("loadGoogleReviews falls back to mock data when API disabled", async () => {
   const { reviews, meta } = await loadGoogleReviews();
