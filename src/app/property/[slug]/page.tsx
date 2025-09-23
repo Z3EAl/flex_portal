@@ -1,4 +1,5 @@
 import ApprovedReviews from "@/components/ApprovedReviews";
+import AvailabilityConfirmationButton from "@/components/AvailabilityConfirmationButton";
 import GiftCardButton from "@/components/GiftCardButton";
 import MagicBentoGallery from "@/components/MagicBentoGallery";
 import { getPropertyBySlug } from "@/lib/properties";
@@ -520,12 +521,12 @@ export default async function PropertyPage({ params }: Props) {
                   </div>
                 </fieldset>
                 <div className="space-y-3">
-                  <GiftCardButton
-                    type="submit"
+                  <AvailabilityConfirmationButton
                     className="w-full rounded-2xl bg-[#134e48] px-4 py-3 text-center text-base font-semibold text-white shadow-lg shadow-[#134e4830] transition hover:bg-[#0f403b]"
+                    confirmationClassName="text-center"
                   >
                     Check availability
-                  </GiftCardButton>
+                  </AvailabilityConfirmationButton>
                   <GiftCardButton className="w-full rounded-2xl border border-[#134e48] px-4 py-3 text-center text-base font-semibold text-[#134e48] transition hover:bg-[#ecf4ef]">
                     Send inquiry
                   </GiftCardButton>
