@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import hostawaySeedData from "../../data/reviews.hostaway.json";
 import {
   normalizeHostawayReview,
   parseHostawayPayload,
@@ -17,11 +15,7 @@ const tokenResponseSchema = z.object({
   expires_in: z.union([z.number(), z.string()]).optional(),
 });
 
-const currentDir = dirname(fileURLToPath(import.meta.url));
-const hostawaySeedPath = resolve(currentDir, "../../data/reviews.hostaway.json");
-const hostawaySeed = JSON.parse(readFileSync(hostawaySeedPath, "utf-8"));
-
-const MOCK: HostawayReview[] = parseHostawayPayload(hostawaySeed);
+const MOCK: HostawayReview[] = parseHostawayPayload(hostawaySeedData);
 
 let tokenCache: { token: string; exp: number } | null = null;
 
