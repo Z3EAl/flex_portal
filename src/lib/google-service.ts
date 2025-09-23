@@ -1,7 +1,4 @@
-import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-
+import googleSeedData from "../../data/reviews.google.json";
 import {
   normalizeGoogleReview,
   parseGoogleMock,
@@ -11,11 +8,7 @@ import {
 import { properties } from "./properties";
 import type { Review } from "./reviews";
 
-const currentDir = dirname(fileURLToPath(import.meta.url));
-const googleSeedPath = resolve(currentDir, "../../data/reviews.google.json");
-const googleSeed = JSON.parse(readFileSync(googleSeedPath, "utf-8"));
-
-const MOCK: GoogleMockPlace[] = parseGoogleMock(googleSeed);
+const MOCK: GoogleMockPlace[] = parseGoogleMock(googleSeedData);
 
 export type GooglePlaceMapping = {
   listing: string;

@@ -22,7 +22,7 @@
 ## Key Implementation Details
 ### API Normalisation (`GET /api/reviews/hostaway`)
 - Wraps Hostaway’s OAuth client-credentials flow with on-demand token caching.
-- Parses responses (and the bundled mock JSON) through a Zod schema to normalise types, coerce IDs/ratings, and guarantee a stable structure for the UI.
+- Parses responses (and the bundled mock dataset JSON) through a Zod schema to normalise types, coerce IDs/ratings, and guarantee a stable structure for the UI.
 - Calls `loadGoogleReviews` to ingest Google Places data (API-first with mock fallback) and merges both sources into a single, typed dataset before generating summaries.
 - Returns:
   - `reviews`: per-review payload with listing, guest, ISO date, rating, categories (as a map), channel, type, text, and status.
@@ -49,7 +49,7 @@
 ## Requirement Checklist
 | Assignment Requirement | Implementation Summary |
 | --- | --- |
-| Mock Hostaway reviews, normalise by listing/type/channel/date, and expose via `GET /api/reviews/hostaway` | Route pulls sandbox data when enabled, falls back to the bundled mock JSON, and returns typed review records with listing, ISO date, review type, channel, rating (with fallbacks), and category map plus per-listing summaries. |
+| Mock Hostaway reviews, normalise by listing/type/channel/date, and expose via `GET /api/reviews/hostaway` | Route pulls sandbox data when enabled, falls back to the bundled mock dataset JSON, and returns typed review records with listing, ISO date, review type, channel, rating (with fallbacks), and category map plus per-listing summaries. |
 | Build a manager dashboard that surfaces per-property performance, filtering, sorting, trend-spotting, and approval controls | `/dashboard/reviews` delivers KPI cards, per-listing summaries, a “category signals” insight panel, search, rating threshold, category/channel/time filters, rating/time sorts, and approval toggles persisted to `localStorage`. |
 | Allow approved reviews to surface on a public-facing property page that mirrors Flex Living’s layout | Property detail route reuses the official hero layout, amenity/policy sections, and only renders reviews chosen in the dashboard through the shared API data. |
 | Document Google Reviews exploration | Implemented: Google Places reviews are normalised into the shared shape, merged with Hostaway data, and documented below with live-integration notes. |
@@ -62,7 +62,7 @@
 
 ### Google Reviews integration
 - `loadGoogleReviews` understands the Places API response shape, converts star ratings to the shared 10-point scale, generates stable numeric IDs, and annotates each record with the `google` channel plus `guest-to-public` type.
-- When `GOOGLE_USE_API=true` and credentials are present, the service fetches `/places/{placeId}?fields=reviews` for each listing, returning live data. In all other scenarios it falls back to curated seed data under `data/reviews.google.json`.
+- When `GOOGLE_USE_API=true` and credentials are present, the service fetches `/places/{placeId}?fields=reviews` for each listing, returning live data. In all other scenarios it falls back to curated seed data shipped in `data/reviews.google.json`.
 - Metadata detailing which source powered the merge is surfaced alongside the Hostaway headers so support teams can see if data came from mocks or the live API.
 
 ## Google Reviews Notes
