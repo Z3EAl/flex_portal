@@ -1,5 +1,6 @@
 // src/components/ReviewCard.tsx
 import type { FC } from "react";
+import { formatDisplayDate } from "@/lib/dates";
 
 type Props = {
   guest: string;
@@ -36,7 +37,7 @@ const ReviewCard: FC<Props> = ({ guest, date, rating, text }) => {
           </div>
         </div>
 
-        <time className="shrink-0 text-sm text-[#5f6f65]">{date}</time>
+        <time className="shrink-0 text-sm text-[#5f6f65]">{formatDisplayDate(date)}</time>
       </header>
 
       {/* Body: comment */}

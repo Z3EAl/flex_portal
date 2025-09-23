@@ -2,15 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import ReviewCard from "@/components/ReviewCard";
-
-type Review = {
-  id: number;
-  listing: string;
-  guest: string;
-  date: string;
-  rating: number | null;
-  text: string;
-};
+import type { Review, ReviewsResponse } from "@/lib/reviews";
 
 export default function ApprovedReviews({ listing }: { listing: string }) {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -21,13 +13,14 @@ export default function ApprovedReviews({ listing }: { listing: string }) {
     if (saved) setApproved(JSON.parse(saved));
     fetch("/api/reviews/hostaway")
       .then(r => r.json())
-      .then(d => setReviews(d.reviews ?? []));
+      .then((d: ReviewsResponse) => setReviews(d.reviews ?? []));
   }, []);
 
-  const visible = useMemo(
-    () => reviews.filter(r => r.listing === listing && approved[r.id]),
-    [reviews, approved, listing]
-  );
+  const visible = useMemo(() => {
+    return reviews
+      .filter(r => r.listing === listing && approved[r.id])
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [reviews, approved, listing]);
 
   if (visible.length === 0) {
     return <div className="text-gray-500">No approved reviews yet.</div>;

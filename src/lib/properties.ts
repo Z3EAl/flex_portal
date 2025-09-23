@@ -53,7 +53,7 @@ export const properties: Property[] = [
       "Kitchen with warm wood cabinetry",
       "Balcony view over Shoreditch",
     ]),
-    hero: `/images/properties/2b-n1a-29-shoreditch-heights/1.jpg`,
+    hero: `/images/properties/2b-n1-a-29-shoreditch-heights/1.jpg`,
   },
   { 
     slug: "Vast 2 Bed Balcony Flat in Highbury",
@@ -70,7 +70,7 @@ export const properties: Property[] = [
       "Tiled bathroom with shower",
       "Bright white kitchen with full appliances",
     ]),
-    hero: `/images/properties/vast-2b-balcony-flat-highbury/1.jpg`,
+    hero: `/images/properties/vast-2-bed-balcony-flat-in-highbury/1.jpg`,
   },
 ];
 

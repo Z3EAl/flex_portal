@@ -1,4 +1,5 @@
 // src/app/dashboard/properties/page.tsx
+import Image from "next/image";
 import Link from "next/link";
 import { properties } from "@/lib/properties";
 
@@ -37,13 +38,14 @@ export default function PropertiesPage() {
             key={p.slug}
             className="dash-card overflow-hidden flex flex-col"
           >
-            <div className="aspect-[16/10] w-full overflow-hidden bg-[var(--tint)]">
-              {/* server-safe <img> (no onError handler) */}
-              <img
+            <div className="relative aspect-[16/10] w-full overflow-hidden bg-[var(--tint)]">
+              <Image
                 src={heroSrc(p)}
                 alt={p.name}
-                className="h-full w-full object-cover"
-                loading="lazy"
+                fill
+                className="object-cover"
+                sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 90vw"
+                priority={false}
               />
             </div>
 
